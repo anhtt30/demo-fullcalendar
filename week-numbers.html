@@ -5,29 +5,29 @@
 <script src='../dist/index.global.js'></script>
 <script>
 
-  /*
-  From https://github.com/fullcalendar/fullcalendar/issues/5026
-  */
-
   document.addEventListener('DOMContentLoaded', function() {
-    var calendarOptions = {
-      initialDate: '2023-01-12',
-      initialView: 'timeGridWeek',
-      nowIndicator: true,
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
+      initialDate: '2023-01-12',
       navLinks: true, // can click day/week names to navigate views
+      nowIndicator: true,
+
+      weekNumbers: true,
+      weekNumberCalculation: 'ISO',
+
       editable: true,
       selectable: true,
-      selectMirror: true,
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
         {
           title: 'All Day Event',
-          start: '2023-01-01',
+          start: '2023-01-01'
         },
         {
           title: 'Long Event',
@@ -80,36 +80,16 @@
           start: '2023-01-28'
         }
       ]
-    };
+    });
 
-    var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), calendarOptions);
     calendar.render();
-
-    var calendar2 = new FullCalendar.Calendar(document.getElementById('calendar2'), calendarOptions);
-    calendar2.render();
-
-    /*
-    Modal
-    */
-
-    var modal = document.querySelector('.modal');
-    var modalTrigger = document.querySelector('.modal-trigger');
-    var modalOverlay = document.querySelector('.modal-overlay');
-
-    modalTrigger.addEventListener('click', function() {
-      modal.classList.add('is-visible');
-      calendar2.updateSize();
-    });
-    modalOverlay.addEventListener('click', function() {
-      modal.classList.remove('is-visible');
-    });
   });
 
 </script>
 <style>
 
   body {
-    margin: 10px;
+    margin: 40px 10px;
     padding: 0;
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
     font-size: 14px;
@@ -120,61 +100,11 @@
     margin: 0 auto;
   }
 
-  .modal {
-    display: none;
-    position: absolute;
-    z-index: 10000;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .modal.is-visible {
-    display: block;
-  }
-
-  .modal-overlay {
-    position: fixed;
-    z-index: 10;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: hsla(0, 0%, 0%, 0.5);
-  }
-
-  .modal-wrapper {
-    position: absolute;
-    z-index: 9999;
-    top: 6em;
-    left: 50%;
-    width: 600px;
-    margin-left: -16em;
-    background-color: #fff;
-    box-shadow: 0 0 1.5em hsla(0, 0%, 0%, 0.35);
-  }
-
-  .modal-content {
-    padding: 1em;
-  }
-
 </style>
 </head>
 <body>
 
-  <button class='modal-trigger'>Show modal</button>
-
   <div id='calendar'></div>
-
-  <div class='modal'>
-    <div class='modal-overlay'></div>
-    <div class='modal-wrapper'>
-      <div class='modal-content'>
-        <div id='calendar2'></div>
-      </div>
-    </div>
-  </div>
 
 </body>
 </html>

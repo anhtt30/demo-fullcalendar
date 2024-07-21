@@ -9,22 +9,21 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      dayMinWidth: 200,
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridYear,dayGridMonth,timeGridWeek'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
-      initialView: 'dayGridYear',
       initialDate: '2023-01-12',
+      initialView: 'timeGridWeek',
+      navLinks: true, // can click day/week names to navigate views
       editable: true,
-      selectable: true,
       dayMaxEvents: true, // allow "more" link when too many events
-      // businessHours: true,
-      // weekends: false,
       events: [
         {
           title: 'All Day Event',
-          start: '2023-01-01'
+          start: '2023-01-01',
         },
         {
           title: 'Long Event',
@@ -93,7 +92,7 @@
   }
 
   #calendar {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
   }
 
