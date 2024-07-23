@@ -104,7 +104,7 @@
           const table = $('.fc-datagrid-body tbody').first();
           const rows = table.find('tr');
 
-          Array.from(rows).slice(0, 6).forEach(row => {
+          Array.from(rows).slice(1, 6).forEach(row => {
             $(row).attr('data-section','1');
           });
 
@@ -125,40 +125,72 @@
 
             placeholder: 'ui-state-highlight',
 
-            helper: function (event, ui) {
-                // Store the group of rows to drag
-                // draggedGroup = ui.data('group');
-                // draggedItems = ui.closest('tbody').find(`tr[data-group="${draggedGroup}"]`);
-                draggedGroup = ui.data('section');
+            // helper: function (event, ui) {
+            //     // Store the group of rows to drag
+            //     // draggedGroup = ui.data('group');
+            //     // draggedItems = ui.closest('tbody').find(`tr[data-group="${draggedGroup}"]`);
+            //     draggedGroup = ui.data('section');
 
 
-                draggedItems = ui.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
+            //     draggedItems = ui.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
 
-                // Create a custom helper
-                const helper = $('<div><ul></ul></div>');
-                const tbody = helper.find('ul');
-                // draggedItems.clone().appendTo(helper);
-                // Adjust width of the helper columns to match the original table
-                draggedItems.each(function (index, element) {
-                  const originalTds = $(element).children().eq(0);
-                  originalTds.each(function(index, ele) {
-                    $('<li>').append($(ele).text()).appendTo(tbody);
-                  });
-                  // const clonedTds = tbody.children().eq(index).children();
-                  // clonedTds.each(function (tdIndex, clonedTd) {
-                  //   $(clonedTd).width($(originalTds[tdIndex]).width());
-                  // });
-                });
+            //     // Create a custom helper
+            //     const helper = $('<div><ul></ul></div>');
+            //     const tbody = helper.find('ul');
+            //     // draggedItems.clone().appendTo(helper);
+            //     // Adjust width of the helper columns to match the original table
+            //     draggedItems.each(function (index, element) {
+            //       const originalTds = $(element).children().eq(0);
+            //       originalTds.each(function(index, ele) {
+            //         $('<li>').append($(ele).text()).appendTo(tbody);
+            //       });
+            //       // const clonedTds = tbody.children().eq(index).children();
+            //       // clonedTds.each(function (tdIndex, clonedTd) {
+            //       //   $(clonedTd).width($(originalTds[tdIndex]).width());
+            //       // });
+            //     });
 
                 
-                return helper;
-              },
+            //     return helper;
+            //   },
+
+              helper: function(e, tr) {
+                draggedGroup = tr.data('section');
+                draggedItems = tr.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
+
+                var $originals = tr.children();
+                var $helper = tr.clone();
+                $.each(draggedItems, function(index, item) {
+                  var $helperCell = $(this).clone();
+                  $helperCell.children().each(function(index) {
+                      $(this).width($originals.eq(index).width());
+                  });
+                  $helper.append($helperCell);
+                })
+                // $helper.append();
+                // $helper.children().each(function(index) {
+                //     // Set helper cell sizes to match the original sizes
+                //     $(this).width($originals.eq(index).width());
+                // });
+                return $helper;
+            },
 
             start: function (G, ui) {
               draggedGroup = ui.item.data('section');
-              //draggedItems = ui.item.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
+              draggedItems = ui.item.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
+              console.log(draggedItems);
               //console.log(draggedItems);
               //draggedItems.addClass('dragging');
+              var $placeholder = ui.placeholder;
+
+              $placeholder.empty();
+              $placeholder.append($(draggedItems));
+              console.log($placeholder)
+              // $.each(draggedItems, function (index, value) {
+              //   $placeholder.append($(value));
+              // })
+              
+
               ui.item.data('originalSection', ui.item.data('section'));
               ui.item.data('originalIndex', ui.item.index());
               // Hide the dragged rows initially
@@ -176,13 +208,22 @@
               if (originalSection !== newSection) {
                 ui.placeholder.addClass('disabled');
               } else {
-                //draggedItems.css('visibility', 'visible');
-                ui.placeholder.html(ui.item.html());
-                ui.placeholder.removeClass('disabled');
-                // Show the dragged rows while sorting
+                console.log(ui.helper.html());
+                // //draggedItems.css('visibility', 'visible');
+                // ui.placeholder.html(ui.item.html());
+                // ui.placeholder.removeClass('disabled');
+                // // Show the dragged rows while sorting
+               // ui.placeholder.html(ui.helper.html());
+                // var $placeholder = ui.placeholder;
+                // $placeholder.css({
+                //     visibility: 'visible',
+                //     height: ui.helper.outerHeight()
+                // });
+                // $placeholder.children().each(function(index) {
+                //     $(this).width(ui.helper.children().eq(index).width());
+                // });
                 
               }
-              
             },
   
             stop: function (event, ui) {
@@ -287,10 +328,10 @@
       flex-direction: column;
       align-items: center;
     }
-    .fc-datagrid-cell-resizer {
+    /* .fc-datagrid-cell-resizer {
       pointer-events: none;
       cursor: default;
-    }
+    } */
   </style>
 </head>
 
