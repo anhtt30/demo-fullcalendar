@@ -125,7 +125,7 @@
 
             placeholder: 'ui-state-highlight',
 
-            // helper: function (event, ui) {
+            // helper: 'original',
             //     // Store the group of rows to drag
             //     // draggedGroup = ui.data('group');
             //     // draggedItems = ui.closest('tbody').find(`tr[data-group="${draggedGroup}"]`);
@@ -154,25 +154,25 @@
             //     return helper;
             //   },
 
-              helper: function(e, tr) {
-                draggedGroup = tr.data('section');
-                draggedItems = tr.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
+            helper: function(e, tr) {
+            //     draggedGroup = tr.data('section');
+            //     draggedItems = tr.closest('tbody').find(`tr[data-section="${draggedGroup}"]`);
 
-                var $originals = tr.children();
-                var $helper = tr.clone();
-                $.each(draggedItems, function(index, item) {
-                  var $helperCell = $(this).clone();
-                  $helperCell.children().each(function(index) {
-                      $(this).width($originals.eq(index).width());
-                  });
-                  $helper.append($helperCell);
-                })
-                // $helper.append();
-                // $helper.children().each(function(index) {
-                //     // Set helper cell sizes to match the original sizes
-                //     $(this).width($originals.eq(index).width());
-                // });
-                return $helper;
+            //     var $originals = tr.children();
+            //     var $helper = tr.clone();
+            //     $.each(draggedItems, function(index, item) {
+            //       var $helperCell = $(this).clone();
+            //       $helperCell.children().each(function(index) {
+            //           $(this).width($originals.eq(index).width());
+            //       });
+            //       $helper.append($helperCell);
+            //     })
+            //     // $helper.append();
+            //     // $helper.children().each(function(index) {
+            //     //     // Set helper cell sizes to match the original sizes
+            //     //     $(this).width($originals.eq(index).width());
+            //     // });
+                 return tr.html();
             },
 
             start: function (G, ui) {
@@ -181,14 +181,20 @@
               console.log(draggedItems);
               //console.log(draggedItems);
               //draggedItems.addClass('dragging');
-              var $placeholder = ui.placeholder;
+              var placeholder = ui.placeholder;
 
-              $placeholder.empty();
-              $placeholder.append($(draggedItems));
-              console.log($placeholder)
-              // $.each(draggedItems, function (index, value) {
-              //   $placeholder.append($(value));
-              // })
+              placeholder.empty();
+              placeholder.append(draggedItems);
+
+              console.log($(placeholder)[0].childNodes)
+              $.each($(placeholder)[0].childNodes, function (index, value) {
+                 $(value).removeAttr('style');
+                 console.log($(draggedItems).eq(index));
+                //  $(value).children().each(function(index) {
+                //     // Set helper cell sizes to match the original sizes
+                //     $(this).width($(draggedItems).eq(index).width());
+                //  });
+              })
               
 
               ui.item.data('originalSection', ui.item.data('section'));
@@ -198,17 +204,17 @@
             },
 
             sort: function (event, ui) {
-              let originalSection = ui.item.data('section');
-              let newSection = ui.placeholder.prev().data('section') || ui.placeholder.next().data('section');
+              // let originalSection = ui.item.data('section');
+              // let newSection = ui.placeholder.prev().data('section') || ui.placeholder.next().data('section');
 
-              if (!newSection) {
-                newSection = ui.item.data('section');
-              }
+              // if (!newSection) {
+              //   newSection = ui.item.data('section');
+              // }
 
-              if (originalSection !== newSection) {
-                ui.placeholder.addClass('disabled');
-              } else {
-                console.log(ui.helper.html());
+              // if (originalSection !== newSection) {
+              //   ui.placeholder.addClass('disabled');
+              // } else {
+                //console.log(ui.helper.html());
                 // //draggedItems.css('visibility', 'visible');
                 // ui.placeholder.html(ui.item.html());
                 // ui.placeholder.removeClass('disabled');
@@ -223,7 +229,7 @@
                 //     $(this).width(ui.helper.children().eq(index).width());
                 // });
                 
-              }
+              // }
             },
   
             stop: function (event, ui) {
