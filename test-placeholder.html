@@ -1,76 +1,236 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RowReorder and RowGroup with DataTable</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.0/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.3.3/css/rowReorder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.0/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.3.3/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#example').DataTable({
+                "order": [7, 'asc'],
+                "columnDefs": [
+                    {
+                        target: 7,
+                        visible: false,
+                        searchable: false
+                    }
+                ]
+                // rowReorder: {
+                //      selector: 'td:nth-child(2)'  // This makes the second column draggable
+                //  },
+                // rowGroup: {
+                //     dataSrc: 6  // Assuming the 7th column contains the group data
+                // }
+            });
+
+            let dragItems;
+            let draggedGroup;            
+            let changeGroup = false;
+            // insert after last item of group of before first item of group
+            let insertAfter = false;
+            // group that item be dragged to
+            let group;
+            let originalIndex;
+            // Make rows sortable
+            $('#example tbody').sortable({
+                items: 'tr',
+                cursor: 'move',
+                /*TODO*/
+                //helper: 'clone',
+                //  helper: function (e, item) {
+                //      // Clone the item to show while dragging
+                //      return $(`<p>${item.text()}</p>`);
+
+                //  },
+                start: function(event, ui) {
+                    // Update RowReorder
+                   //$(table).rowReorder.enable();
+                   draggedGroup = ui.item.data('group');
+                   dragItems = undefined;
+                   originalIndex = ui.item.index();;
+                   //if drag whole group
+                   if (ui.item.hasClass('parent')) {
+                        dragItems = $('#example tbody').find(`tr[data-group="${draggedGroup}"]`);
+                        ui.placeholder.css('height', ui.item.height() * dragItems.length);
+                        //TODO
+                    }
+                },
+                sort: function (event, ui) {
+                    // if drag whole group
+                    if (dragItems != undefined) {
+                        if (ui.placeholder.prev().data('group') == draggedGroup
+                            || ui.placeholder.next().data('group') == draggedGroup) {
+                            ui.placeholder.css('display', 'none');
+                            dragItems.each(function (index, item) {
+                                $(item).css('display', '');
+                            })
+                            changeGroup = false;
+                            console.log(changeGroup);
+                        } else {
+                            ui.placeholder.css('display', '');
+                            dragItems.each(function (index, item) {
+                                $(item).css('display', 'none');
+                            })
+                            changeGroup = true;
+                            group = ui.placeholder.prev().data('group') != null ? ui.placeholder.prev().data('group')
+                                : ui.placeholder.next().data('group');
+                            console.log(ui.placeholder.index());
+                            if (ui.item.index() < ui.placeholder.index()) insertAfter = true; else insertAfter = false;
+                            console.log(changeGroup);
+                        }
+                    }
+                    //if drag one item inside group
+                    else {
+                        if (ui.placeholder.prev().data('group') == draggedGroup) {
+                            ui.placeholder.css('display', '');
+                            changeGroup = false;
+                        } else {
+                            ui.placeholder.css('display', 'none');
+                            changeGroup = true;
+                        }
+                    }
+                },
+                stop: function (event, ui) {
+                    //console.log(ui.item.eq(0).children().last().text(ui.item.index()));
+                    //drag whole group
+                    if (dragItems != undefined) {
+                        if (changeGroup) {
+                            if (insertAfter) {
+                                $(dragItems.get().reverse()).each(function (index, item) {
+                                    $(item).insertAfter($('#example tbody').find(`tr[data-group="${group}"]`).last());
+                                    $(item).css('display', '');
+                                });
+                            } else {
+                                dragItems.each(function (index, item) {
+                                    $(item).insertBefore($('#example tbody').find(`tr[data-group="${group}"]`).first());
+                                    $(item).css('display', '');
+                                });
+                                
+                            }
+                            
+                        } else {
+                            let originalItem = $('#example tbody tr').eq(originalIndex);
+                            if (originalIndex > ui.item.index()) {
+                                let currentItem = ui.item.detach();
+                                originalItem.after(currentItem); // Move the item back to its original position
+                            } else if (originalIndex < ui.item.index()) {
+                                let currentItem = ui.item.detach();
+                                originalItem.before(currentItem); // Move the item back to its original position
+                            }
+                        }
+                    }
+                    //drag one item inside group
+                    else {
+                        if (changeGroup) {
+                            let originalItem = $('#example tbody tr').eq(originalIndex);
+                            if (originalIndex > ui.item.index()) {
+                                let currentItem = ui.item.detach();
+                                originalItem.after(currentItem); // Move the item back to its original position
+                            } else if (originalIndex < ui.item.index()) {
+                                let currentItem = ui.item.detach();
+                                originalItem.before(currentItem); // Move the item back to its original position
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+
+    </script>
 </head>
+
 
 <body>
 
-    <table id="dragndrop">
+    <table id="example" class="display">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Size</th>
-                <th>Kind</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+                <th>Group</th>
+                <th>sortOrder</th>
             </tr>
         </thead>
         <tbody>
-            <tr id="node-1">
-                <td><span class="parent">CHANGELOG</span></td>
-                <td>4 KB</td>
-                <td>Parent</td>
+            <tr data-group="1" class="parent">
+                <td>b</td>
+                <td>System Architect1</td>
+                <td>Edinburgh1</td>
+                <td>611</td>
+                <td>2011/04/25</td>
+                <td>$320,8001</td>
+                <td>1</td>
+                <td>1</td>
             </tr>
-
-            <tr id="node-3" class="child-of-node-1">
-                <td><span class="child">images</span></td>
-                <td>--</td>
-                <td>child</td>
+            <tr data-group="1">
+                <td>c</td>
+                <td>System Architect2</td>
+                <td>Edinburgh2</td>
+                <td>612</td>
+                <td>2011/04/25</td>
+                <td>$320,8002</td>
+                <td>1</td>
+                <td>1</td>
             </tr>
-
-            <tr id="node-2">
-                <td>
-                    <table>
-                        <tbody>
-                          <tr><td>hello</td></tr>
-                          <tr><td>hello1</td></tr>
-                          <tr><td>hello2</td></tr>
-                        </tbody>
-                    </table>
-                </td>
-                <td><table>
-                    <tbody>
-                      <tr><td>hello</td></tr>
-                      <tr><td>hello1</td></tr>
-                      <tr><td>hello2</td></tr>
-                    </tbody>
-                </table></td>
-                <td><table>
-                    <tbody>
-                      <tr><td>hello</td></tr>
-                      <tr><td>hello1</td></tr>
-                      <tr><td>hello2</td></tr>
-                    </tbody>
-                </table></td>
+            <tr data-group="1">
+                <td>c2</td>
+                <td>System Architect2</td>
+                <td>Edinburgh2</td>
+                <td>612</td>
+                <td>2011/04/25</td>
+                <td>$320,8002</td>
+                <td>1</td>
+                <td>1</td>
             </tr>
-
-            <tr id="node-4" class="child-of-node-2">
-                <td><span class="child">bg-table-thead.png</span></td>
-                <td>52 KB</td>
-                <td>child</td>
+            <tr data-group="2" class="parent">
+                <td>d</td>
+                <td>System Architect3</td>
+                <td>Edinburgh3</td>
+                <td>613</td>
+                <td>2011/04/25</td>
+                <td>$320,8003</td>
+                <td>2</td>
+                <td>2</td>
             </tr>
-
-            <tr id="node-5" class="child-of-node-2">
-                <td><span class="child">folder.png</span></td>
-                <td>4 KB</td>
-                <td>child</td>
+            <tr data-group="2">
+                <td>e</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+                <td>2</td>
+                <td>3</td>
             </tr>
-
+            <tr data-group="2">
+                <td>f</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+                <td>2</td>
+                <td>4</td>
+            </tr>
         </tbody>
     </table>
 
-    <script type="text/javascript">
 
-    </script>
 </body>
 
 </html>
