@@ -3,13 +3,14 @@
 
 <head>
   <meta charset='utf-8' />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
   <script src='../dist/index.global.js'></script>
   <script>
 
     $(document).ready(function () {
 
+      var initResources;
       var calendarEl = document.getElementById('calendar');
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -31,65 +32,64 @@
           }
         },
         resourceOrder: 'sortOrder',
-        resourceAreaWidth: '50%',
+        resourceAreaWidth: '500px',
 
         resources: [
           { id: '1', title: 'Auditorium A', occupancy: 40, subRoom: 'A1', sortOrder: 0 },
-          {
-            id: 'a', title: 'Auditorium A', occupancy: 40, subRoom: 'A1', sortOrder: 1, children: [
-              { id: 'b', title: 'Auditorium B', occupancy: 40, subRoom: 'B1', eventColor: 'green', sortOrder: 2 },
-              { id: 'c', title: 'Auditorium C', occupancy: 40, subRoom: 'C1', eventColor: 'orange', sortOrder: 3 },
-              { id: 'd', title: 'Auditorium D', occupancy: 40, subRoom: 'D1', sortOrder: 4 },
-              { id: 'd1', title: 'Room D1', occupancy: 10, subRoom: 'D1-A', sortOrder: 5 },
-            ]
-          },
-          {
-            id: 'd2', title: 'Room D2', occupancy: 10, subRoom: 'D1-B', sortOrder: 6, children: [
-              { id: 'e', title: 'Auditorium E', occupancy: 40, subRoom: 'E1', sortOrder: 7 },
-              { id: 'f', title: 'Auditorium F', occupancy: 40, subRoom: 'F1', eventColor: 'red', sortOrder: 8 },
-              { id: 'g', title: 'Auditorium G', occupancy: 40, subRoom: 'G1', sortOrder: 9 },
-              { id: 'h', title: 'Auditorium H', occupancy: 40, subRoom: 'H1', sortOrder: 10 },
-              { id: 'i', title: 'Auditorium I', occupancy: 40, subRoom: 'I1', sortOrder: 11 },
-              { id: 'j', title: 'Auditorium J', occupancy: 40, subRoom: 'J1', sortOrder: 12 },
-              { id: 'k', title: 'Auditorium K', occupancy: 40, subRoom: 'K1', sortOrder: 13 },
-              { id: 'l', title: 'Auditorium L', occupancy: 40, subRoom: 'L1', sortOrder: 14 },
-              { id: 'm', title: 'Auditorium M', occupancy: 40, subRoom: 'M1', sortOrder: 15 },
-            ]
-          },
-          {
-            id: 'n', title: 'Auditorium N', occupancy: 40, subRoom: 'N1', sortOrder: 16, children: [
-              { id: 'o', title: 'Auditorium O', occupancy: 40, subRoom: 'O1', sortOrder: 17 },
-              { id: 'p', title: 'Auditorium P', occupancy: 40, subRoom: 'P1', sortOrder: 18 },
-              { id: 'q', title: 'Auditorium Q', occupancy: 40, subRoom: 'Q1', sortOrder: 19 },
-              { id: 'r', title: 'Auditorium R', occupancy: 40, subRoom: 'R1', sortOrder: 20 },
-              { id: 's', title: 'Auditorium S', occupancy: 40, subRoom: 'S1', sortOrder: 21 },
-              { id: 't', title: 'Auditorium T', occupancy: 40, subRoom: 'T1', sortOrder: 22 },
-              { id: 'u', title: 'Auditorium U', occupancy: 40, subRoom: 'U1', sortOrder: 23 },
-              { id: 'v', title: 'Auditorium V', occupancy: 40, subRoom: 'V1', sortOrder: 24 },
-              { id: 'w', title: 'Auditorium W', occupancy: 40, subRoom: 'W1', sortOrder: 25 },
-              { id: 'x', title: 'Auditorium X', occupancy: 40, subRoom: 'X1', sortOrder: 26 },
-              { id: 'y', title: 'Auditorium Y', occupancy: 40, subRoom: 'Y1', sortOrder: 27 },
-              { id: 'z', title: 'Auditorium Z', occupancy: 40, subRoom: 'Z1', sortOrder: 28 }
-            ]
-          },
-        ],
+          { id: 'a', title: 'Auditorium A', occupancy: 40, subRoom: 'A1', sortOrder: 1 }, 
+          
+              { id: 'b', title: 'Auditorium B', occupancy: 40, subRoom: 'B1', eventColor: 'green', parentId: 'a', sortOrder: 2 },
+              { id: 'c', title: 'Auditorium C', occupancy: 40, subRoom: 'C1', eventColor: 'orange', parentId: 'a', sortOrder: 3 },
+              { id: 'd', title: 'Auditorium D', occupancy: 40, subRoom: 'D1', parentId: 'a', sortOrder: 4 },
+              { id: 'd1', title: 'Room D1', occupancy: 10, subRoom: 'D1-A', parentId: 'd2', sortOrder: 5 },
+            
+          
+          {id: 'd2', title: 'Room D2', occupancy: 10, subRoom: 'D1-B', sortOrder: 6},
+              { id: 'e', title: 'Auditorium E', occupancy: 40, subRoom: 'E1', parentId: 'd2', sortOrder: 7 },
+              { id: 'f', title: 'Auditorium F', occupancy: 40, subRoom: 'F1', eventColor: 'red', parentId: 'd2', sortOrder: 8 },
+              { id: 'g', title: 'Auditorium G', occupancy: 40, subRoom: 'G1', parentId: 'd2', sortOrder: 9 },
+              { id: 'h', title: 'Auditorium H', occupancy: 40, subRoom: 'H1', parentId: 'd2', sortOrder: 10 },
+              { id: 'i', title: 'Auditorium I', occupancy: 40, subRoom: 'I1', parentId: 'd2', sortOrder: 11 },
+              { id: 'j', title: 'Auditorium J', occupancy: 40, subRoom: 'J1', parentId: 'd2', sortOrder: 12 },
+              { id: 'k', title: 'Auditorium K', occupancy: 40, subRoom: 'K1', parentId: 'd2', sortOrder: 13 },
+              { id: 'l', title: 'Auditorium L', occupancy: 40, subRoom: 'L1', parentId: 'd2', sortOrder: 14 },
+              { id: 'm', title: 'Auditorium M', occupancy: 40, subRoom: 'M1', parentId: 'd2', sortOrder: 15 },
+          
+          {id: 'n', title: 'Auditorium N', occupancy: 40, subRoom: 'N1', sortOrder: 16},
+              { id: 'o', title: 'Auditorium O', occupancy: 40, subRoom: 'O1', parentId: 'n', sortOrder: 17 },
+              { id: 'p', title: 'Auditorium P', occupancy: 40, subRoom: 'P1', parentId: 'n',sortOrder: 18 },
+              { id: 'q', title: 'Auditorium Q', occupancy: 40, subRoom: 'Q1', parentId: 'n',sortOrder: 19 },
+              { id: 'r', title: 'Auditorium R', occupancy: 40, subRoom: 'R1', parentId: 'n',sortOrder: 20 },
+              { id: 's', title: 'Auditorium S', occupancy: 40, subRoom: 'S1', parentId: 'n',sortOrder: 21 },
+              { id: 't', title: 'Auditorium T', occupancy: 40, subRoom: 'T1', parentId: 'n',sortOrder: 22 },
+              { id: 'u', title: 'Auditorium U', occupancy: 40, subRoom: 'U1', parentId: 'n',sortOrder: 23 },
+              { id: 'v', title: 'Auditorium V', occupancy: 40, subRoom: 'V1', parentId: 'n',sortOrder: 24 },
+              { id: 'w', title: 'Auditorium W', occupancy: 40, subRoom: 'W1', parentId: 'n',sortOrder: 25 },
+              { id: 'x', title: 'Auditorium X', occupancy: 40, subRoom: 'X1', parentId: 'n',sortOrder: 26 },
+              { id: 'y', title: 'Auditorium Y', occupancy: 40, subRoom: 'Y1', parentId: 'n',sortOrder: 27 },
+              { id: 'z', title: 'Auditorium Z', occupancy: 40, subRoom: 'Z1', parentId: 'n',sortOrder: 28 }
+      ],
 
         resourceAreaColumns: [
           {
             headerContent: "header 1",
             field: "title",
+            width: "200px"
           },
           {
             headerContent: "header 2",
             field: "occupancy",
+            width: "100px"
           },
           {
             headerContent: "header 3",
             field: "subRoom",
+            width: "100px"
           },
           {
             headerContent: "header 4",
             field: "sortOrder",
+            width: "100px"
           }
         ],
 
@@ -101,6 +101,10 @@
           { id: '5', resourceId: 'f', start: '2023-01-07T00:30:00', end: '2023-01-07T02:30:00', title: 'event 5' }
         ],
         viewDidMount: function (arg) {
+          $('.fc-datagrid-header').css('min-width', '400px');
+          $('.fc-datagrid-header').css('max-width', '400px');
+          $('.fc-datagrid-body').css('min-width', '400px');
+          $('.fc-datagrid-body').css('max-width', '400px');
           const table = $('.fc-datagrid-body tbody').first();
           const rows = table.find('tr');
 
@@ -274,18 +278,28 @@
           });
 
         // });
-          $(".fc-datagrid-body tbody").disableSelection();
+          //$(".fc-datagrid-body tbody").disableSelection();
 
           // Add custom group header after rendering
           const tableHeader = calendarEl.querySelector('.fc-datagrid-header thead tr');
           const groupHeader = document.createElement('tr');
 
           // Create a group header cell that spans 3 columns
-          const groupHeaderCell = document.createElement('th');
-          groupHeaderCell.setAttribute('colspan', '3');
-          groupHeaderCell.className = 'fc-col-group-header';
-          groupHeaderCell.innerText = 'Group Header';
-          groupHeader.appendChild(groupHeaderCell);
+          const groupHeaderCell1 = document.createElement('th');
+          groupHeaderCell1.setAttribute('colspan', '1');
+          groupHeaderCell1.className = 'fc-col-group-header';
+          groupHeaderCell1.innerText = '';
+          const groupHeaderCell2 = document.createElement('th');
+          groupHeaderCell2.setAttribute('colspan', '2');
+          groupHeaderCell2.className = 'fc-col-group-header';
+          groupHeaderCell2.innerText = 'Group Header';
+          const groupHeaderCell3 = document.createElement('th');
+          groupHeaderCell3.setAttribute('colspan', '1');
+          groupHeaderCell3.className = 'fc-col-group-header';
+          groupHeaderCell3.innerText = '';
+          groupHeader.appendChild(groupHeaderCell1);
+          groupHeader.appendChild(groupHeaderCell2);
+          groupHeader.appendChild(groupHeaderCell3);
 
           // Insert the group header row before the column headers
           tableHeader.parentNode.insertBefore(groupHeader, tableHeader);
@@ -299,6 +313,57 @@
       });
 
       calendar.render();
+      initResources = calendar.getResources();
+
+      $("#resourceFilter").on('keyup', function (event) {
+        if (event.keyCode == 13) {
+
+          var filterValue = this.value.toLowerCase();
+
+          // Filter resources
+          var filteredResources = initResources.filter(function (resource) {
+            return resource.title.toLowerCase().includes(filterValue);
+          });
+
+          // Set filtered resources to the calendar
+          console.log(filteredResources);
+          // calendar.refetchResources = function () {
+          //   return filteredResources;
+          // };
+
+          // // Re-render the calendar with the filtered resources
+          // calendar.render();
+
+          // Update the calendar with the filtered resources
+          calendar.batchRendering(function () {
+            calendar.getResources().forEach(function (resource) {
+              resource.remove();
+            });
+            filteredResources.forEach(function (resource, index) {
+              // when resource is child, add it's parent to calendar
+              if (resource._resource.parentId != null && resource._resource.parentId != '') {
+                // if parent not exist in calendar, add it
+                if (calendar.getResourceById(resource._resource.parentId) == null) {
+                  calendar.addResource(initResources.filter(function (r) {
+                    return r.id == resource._resource.parentId
+                  })[0]);
+                }
+              } else {
+                  // when resource is parent, add child resources to calendar
+                  initResources.filter(function (r) {
+                    return r._resource.parentId == resource.id
+                  }).forEach(function(resource, index) {
+                    // if child not exist in calendar, add it
+                    if(calendar.getResourceById(resource.id) == null) {
+                      calendar.addResource(resource);
+                    }
+                  })
+              }
+              calendar.addResource(resource);
+            });
+          });
+        }
+      });
     });
 
 
@@ -326,8 +391,8 @@
     .fc-col-group-header {
       text-align: center;
       font-weight: bold;
-      background-color: #f8f8f8;
-      border-bottom: 1px solid #ddd;
+      background-color: #fff;
+      border-bottom: none;
     }
     .fc-col-group {
       display: flex;
@@ -343,6 +408,7 @@
 
 <body>
 
+  <input type="text" id="resourceFilter" placeholder="Filter resources..." />
   <div id='calendar'></div>
 
 </body>
