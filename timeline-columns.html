@@ -3,7 +3,7 @@
 
 <head>
   <meta charset='utf-8' />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
   <script src='../dist/index.global.js'></script>
   <script>
@@ -14,7 +14,9 @@
       var calendarEl = document.getElementById('calendar');
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
-        now: '2023-01-07',
+        now: '2024-07-15',
+        nowIndicator: true,
+        initialDate: '2024-06-01',
         editable: true,
         aspectRatio: 1.8,
         //scrollTime: '00:00',
@@ -24,6 +26,18 @@
           right: 'resourceTimelineDay,resourceTimelineThreeDays,timeGridWeek,dayGridMonth'
         },
         initialView: 'resourceTimeline',
+        slotLabelFormat: [
+          { month: 'numeric', year: 'numeric' },
+          { day: 'numeric' },
+          { weekday: 'short' },
+          { weekday: 'short' },
+        ],
+        slotLabelInterval: { days: 1 }, // ヘッダの日付を表示する単位
+        // スロット単位設定
+        slotDuration: { days: 1 },
+        // 開始
+        // 期間
+        duration: { months: 3 },
         views: {
           resourceTimelineThreeDays: {
             type: 'resourceTimeline',
@@ -100,7 +114,15 @@
           { id: '4', resourceId: 'e', start: '2023-01-07T03:00:00', end: '2023-01-07T08:00:00', title: 'event 4' },
           { id: '5', resourceId: 'f', start: '2023-01-07T00:30:00', end: '2023-01-07T02:30:00', title: 'event 5' }
         ],
+        datesSet: function() {
+          console.log('test');
+          calendar.setOption('duration', {month:7});
+          //calendar.gotoDate('2024-08-01');
+          //scrollToSpecificDate('2024-08-01');
+        },
         viewDidMount: function (arg) {
+          calendar.setOption('initialDate','2024-06-01');
+          // calendar.gotoDate('2024-09-01');
           $('.fc-datagrid-header').css('min-width', '400px');
           $('.fc-datagrid-header').css('max-width', '400px');
           $('.fc-datagrid-body').css('min-width', '400px');
@@ -283,6 +305,7 @@
           // Add custom group header after rendering
           const tableHeader = calendarEl.querySelector('.fc-datagrid-header thead tr');
           const groupHeader = document.createElement('tr');
+          $(groupHeader).css('height','49px');
 
           // Create a group header cell that spans 3 columns
           const groupHeaderCell1 = document.createElement('th');
@@ -313,7 +336,20 @@
       });
 
       calendar.render();
+
+      
+      $('#gotoDate').on('click', function () {
+        scrollToSpecificDate(new Date());
+      })
       initResources = calendar.getResources();
+
+      function scrollToSpecificDate(date) {
+        var date = new Date();
+        var timeGrid = $(`td .fc-timeline-slot[data-date="2024-07-15"]`)[0];
+      
+        console.log(timeGrid);
+        timeGrid.scrollIntoView({inline: "center"});
+      }
 
       $("#resourceFilter").on('keyup', function (event) {
         if (event.keyCode == 13) {
@@ -409,6 +445,7 @@
 <body>
 
   <input type="text" id="resourceFilter" placeholder="Filter resources..." />
+  <input type="button" id="gotoDate" value="Go to date" />
   <div id='calendar'></div>
 
 </body>
