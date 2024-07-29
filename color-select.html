@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dropdown filter</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.0/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.3.3/css/rowReorder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.0/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.3.3/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById('filterButton').addEventListener('click', function () {
+                var dropdown = document.getElementById('dropdownMenu');
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    setTimeout(function () {
+                        dropdown.style.display = 'none';
+                    }, 300); // Match this to the transition duration
+                } else {
+                    dropdown.style.display = 'block';
+                    setTimeout(function () {
+                        dropdown.classList.add('show');
+                    }, 10); // Small timeout to ensure display change is processed before adding class
+                }
+            });
+            var container = document.getElementById('dropdownMenu');
+
+            window.addEventListener('click', function (event) {
+
+                if (!event.target.matches('#filterButton')) {
+                    var dropdowns = document.getElementsByClassName('dropdown-content');
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                            setTimeout(function () {
+                                openDropdown.style.display = 'none';
+                            }, 300); // Match this to the transition duration
+                        }
+                    }
+                }
+            });
+
+            var colorMap = [{"red": "#DDDDDD"},{"yellow": "#FFFFFF"}, {"blue": "#CCCCCC"}];
+            $('#dropdownMenu label').on('click', function () {
+                $('#filterButton .color-span').css('background-color', $(this).find('.color-span').attr('data-color'));
+            })
+
+        });
+
+
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: bisque;
+        }
+
+        #filterButton {
+            display: inline-block;
+            width: 70px;            /* Width similar to a select box */
+            padding: 5px;            /* Padding to make it look like a select box */
+            background-color: white; /* Background color of a typical select box */
+            border: 1px solid #ccc;  /* Border similar to a select box */
+            cursor: pointer;         /* Cursor to indicate it's clickable */
+            font-size: 16px;         /* Font size similar to a select box */
+            text-align: center;        /* Align text to the left */
+            position: relative;      /* For positioning the arrow */
+        }
+
+        #filterButton:after {
+            content: '▼';            /* Unicode arrow down symbol */
+            position: absolute;
+            right: 5px;             /* Position arrow inside the button */
+            top: 50%;
+            /* bottom: 50%; */
+            transform: translateY(-50%);
+            pointer-events: none;    /* Prevents arrow from blocking button clicks */
+        }
+
+        #dropdownMenu {
+            display: none;
+            /* Hidden by default */
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 60px;
+            border-radius: 5px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            opacity: 0;
+            /* Set opacity to 0 for initial hidden state */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            /* Add transition for opacity and transform */
+            transform: translateY(-10px); 
+            /* Move up initially */
+        }
+
+        #dropdownMenu.show {
+            display: block;
+            /* Make it visible */
+            opacity: 1;
+            /* Set opacity to 1 to fade in */
+            transform: translateY(10px); 
+            /* Reset transform to original position */
+        }
+
+        #dropdownMenu::before {
+            content: "";
+            position: absolute;
+            top: -20px; /* Position the arrow */
+            left: 20px; /* Adjust this to align the arrow */
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent #f9f9f9 transparent;
+        }
+
+        #dropdownMenu label {
+            padding: 10px 20px;
+            height: 15px;
+            display: block;
+            cursor: pointer;
+        }
+
+        #dropdownMenu label:hover {
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .relative {
+            position: relative;
+            top: 20px; /* Moves 20px down from its original position */
+            left: 10px; /* Moves 10px to the right from its original position */
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        .color-span {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border-radius: 2px;
+            display: block;
+        }
+    </style>
+</head>
+
+
+<body>
+    <h1>hello there</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>hello</td>
+                <td><button id="filterButton"><span class="color-span">click</span></button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <label for="filter1">
+                            <span class="color-span" data-color="red" style="background-color: red;"></span>
+                        </label>
+                        <label for="filter2">
+                            <span class="color-span" data-color="blue" style="background-color: blue;"></span>
+                        </label>
+                        <label for="filter3">
+                            <span class="color-span" data-color="yellow" style="background-color: yellow;"></span>
+                        </label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            
+        </tbody>
+
+        
+    </table>
+    <div class="relative">This is a relatively positioned element.</div>
+    
+    
+
+
+</body>
+
+</html>
