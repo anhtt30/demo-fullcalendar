@@ -148,10 +148,10 @@
 
           //calendar.setOption('initialDate','2024-06-01');
           // calendar.gotoDate('2024-09-01');
-          $('.fc-datagrid-header').css('min-width', '400px');
-          $('.fc-datagrid-header').css('max-width', '400px');
-          $('.fc-datagrid-body').css('min-width', '400px');
-          $('.fc-datagrid-body').css('max-width', '400px');
+          $('.fc-datagrid-header').css('width', '400px');
+          // $('.fc-datagrid-header').css('max-width', '400px');
+          $('.fc-datagrid-body').css('width', '400px');
+          // $('.fc-datagrid-body').css('max-width', '400px');
           const table = $('.fc-datagrid-body tbody').first();
           const rows = table.find('tr');
 
@@ -362,6 +362,45 @@
 
       calendar.render();
 
+      // Custom code to enable dragging the timeline
+      var isDragging = false;
+      var startX, startY, scrollLeft, scrollTop;
+
+      var $scroller = $(calendarEl).find('.fc-scroller-liquid-absolute').eq(1);
+
+      $scroller.on('mousedown', function (e) {
+        // Check if the mouse is over an event element
+        if ($(e.target).closest('.fc-event').length) {
+          return;
+        }
+        isDragging = true;
+        // $scroller.addClass('active');
+        startX = e.pageX - $scroller.offset().left;
+        startY = e.pageY - $scroller.offset().top;
+        scrollLeft = $scroller.scrollLeft();
+        scrollTop = $scroller.scrollTop();
+      });
+
+      $(document).on('mouseup', function () {
+        isDragging = false;
+        //$scroller.removeClass('active');
+      });
+
+      $scroller.on('mouseleave', function () {
+        isDragging = false;
+        //$scroller.removeClass('active');
+      });
+
+      $scroller.on('mousemove', function (e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var x = e.pageX - $scroller.offset().left;
+        var y = e.pageY - $scroller.offset().top;
+        var walkX = (x - startX) * 3; // Adjust scroll speed for horizontal scrolling
+        var walkY = (y - startY) * 3; // Adjust scroll speed for vertical scrolling
+        $scroller.scrollLeft(scrollLeft - walkX);
+        $scroller.scrollTop(scrollTop - walkY);
+      });
       
       $('#gotoDate').on('click', function () {
         scrollToSpecificDate(new Date());
@@ -371,7 +410,7 @@
       function scrollToSpecificDate(date) {
         var date = new Date();
        // date.format('yyyy-MM-dd')
-        var timeGrid = $(`td .fc-timeline-slot[data-date="2024-06-01"]`)[0];
+        var timeGrid = $(`td .fc-timeline-slot[data-date="2024-07-21"]`)[0];
       
         console.log(timeGrid);
         timeGrid.scrollIntoView({inline: "center"});
@@ -472,6 +511,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+    #calendar .fc-scroller-liquid-absolute{
+      cursor: grab;
+    }
+    #calendar .fc-scroller-liquid-absolute:active {
+      cursor: grabbing;
     }
     /* .fc-datagrid-cell-resizer {
       pointer-events: none;
