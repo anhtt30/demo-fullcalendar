@@ -18,13 +18,13 @@
         $(document).ready(function () {
             var table = $('#example').DataTable({
                 "order": [7, 'asc'],
-                "columnDefs": [
-                    {
-                        target: 7,
-                        visible: false,
-                        searchable: false
-                    }
-                ]
+                // "columnDefs": [
+                //     {
+                //         target: 7,
+                //         visible: false,
+                //         searchable: false
+                //     }
+                // ]
                 // rowReorder: {
                 //      selector: 'td:nth-child(2)'  // This makes the second column draggable
                 //  },
@@ -33,6 +33,51 @@
                 // }
             });
 
+            $('#example tr').on('click', function () {
+                $(this).toggleClass('selected');
+            });
+
+            $('#addrow').on('click', function () {
+                var selectedGroup = $('#example .selected').attr('data-group');
+                console.log(selectedGroup);
+                let length = table.data().length;
+                let maxSortOrder = 0;
+                for(var i =0;i<length;i++) {
+                    if(table.cell(i, 6).data() == selectedGroup) {
+                        if(maxSortOrder < table.cell(i, 7).data()) {
+                            maxSortOrder = table.cell(i, 7).data();
+                        }
+                    }
+                }
+
+                for(var i =0;i<length;i++) {
+                    if(table.cell(i, 7).data() > Number(maxSortOrder)) {
+                        table.cell(i, 7).data(Number(table.cell(i, 7).data()) + 1);
+                    }
+                }
+                var cloneTr = $('#clone tr').clone();
+                cloneTr.find('td:nth-child(7)').text(selectedGroup);
+                cloneTr.find('td:nth-child(8)').text(Number(maxSortOrder) + 1);
+                cloneTr.attr('data-group', selectedGroup);
+                console.log(maxSortOrder);
+
+                table.row.add(cloneTr).draw();
+            });
+
+            $('#delrow').on('click', function () {
+                table.row($('.selected')).remove().draw();
+            })
+
+            setupSortable(table);
+            $('#destroy').on('click', function () {
+                $('#example tbody').sortable("destroy");
+            })
+            $('#rebind').on('click', function () {
+                setupSortable(table);
+            })
+        });
+
+        function setupSortable(table) {
             let dragItems;
             let draggedGroup;            
             let changeGroup = false;
@@ -55,7 +100,8 @@
                 start: function(event, ui) {
                     // Update RowReorder
                    //$(table).rowReorder.enable();
-                   draggedGroup = ui.item.data('group');
+                   draggedGroup = ui.item.attr('data-group');
+                   console.log(draggedGroup);
                    dragItems = undefined;
                    originalIndex = ui.item.index();;
                    //if drag whole group
@@ -68,8 +114,8 @@
                 sort: function (event, ui) {
                     // if drag whole group
                     if (dragItems != undefined) {
-                        if (ui.placeholder.prev().data('group') == draggedGroup
-                            || ui.placeholder.next().data('group') == draggedGroup) {
+                        if (ui.placeholder.prev().attr('data-group') == draggedGroup
+                            || ui.placeholder.next().attr('data-group') == draggedGroup) {
                             ui.placeholder.css('display', 'none');
                             dragItems.each(function (index, item) {
                                 $(item).css('display', '');
@@ -82,8 +128,8 @@
                                 $(item).css('display', 'none');
                             })
                             changeGroup = true;
-                            group = ui.placeholder.prev().data('group') != null ? ui.placeholder.prev().data('group')
-                                : ui.placeholder.next().data('group');
+                            group = ui.placeholder.prev().attr('data-group') != null ? ui.placeholder.prev().attr('data-group')
+                                : ui.placeholder.next().attr('data-group');
                             console.log(ui.placeholder.index());
                             if (ui.item.index() < ui.placeholder.index()) insertAfter = true; else insertAfter = false;
                             console.log(changeGroup);
@@ -91,12 +137,14 @@
                     }
                     //if drag one item inside group
                     else {
-                        if (ui.placeholder.prev().data('group') == draggedGroup) {
+                        if (ui.placeholder.prev().attr('data-group') == draggedGroup) {
                             ui.placeholder.css('display', '');
                             changeGroup = false;
+                            console.log(changeGroup);
                         } else {
                             ui.placeholder.css('display', 'none');
                             changeGroup = true;
+                            console.log(changeGroup);
                         }
                     }
                 },
@@ -142,9 +190,31 @@
                             }
                         }
                     }
+
+                     //var sortedIDs = $(this).sortable("toArray", { attribute: "data-resource-id" });
+                    // var sortedIDs = $(this).children('tr').map(function () {
+                    //     return $(this).find('.sorting_1').text();
+                    // }).get();
+                    // console.log(sortedIDs);
+                    // let length = table.data().length;
+                    // sortedIDs.forEach(function (id, index) {
+                    //     for (var i = 0; i < length; i++) {
+                    //         if (table.cell(i, 7).data() == id) {
+                    //             table.cell(i, 7).data(index + 1);
+                    //             return true;
+                    //         }
+                    //     }
+                    // });
+                    $('#example tbody tr').each(function(index) {
+                        var rowData = table.row(this).data();
+                        rowData[7] = index + 1; // Update sortOrder with new index
+                        table.row(this).data(rowData);
+                    });
+                    table.draw();
+
                 }
             });
-        });
+        }
 
 
     </script>
@@ -152,7 +222,10 @@
 
 
 <body>
-
+    <input type="button" id="addrow" value="Add Row">
+    <input type="button" id="delrow" value="Del Row">
+    <input type="button" id="destroy" value="unbind sortable">
+    <input type="button" id="rebind" value="rebind sortable">
     <table id="example" class="display">
         <thead>
             <tr>
@@ -185,7 +258,7 @@
                 <td>2011/04/25</td>
                 <td>$320,8002</td>
                 <td>1</td>
-                <td>1</td>
+                <td>2</td>
             </tr>
             <tr data-group="1">
                 <td>c2</td>
@@ -195,7 +268,7 @@
                 <td>2011/04/25</td>
                 <td>$320,8002</td>
                 <td>1</td>
-                <td>1</td>
+                <td>3</td>
             </tr>
             <tr data-group="2" class="parent">
                 <td>d</td>
@@ -205,7 +278,7 @@
                 <td>2011/04/25</td>
                 <td>$320,8003</td>
                 <td>2</td>
-                <td>2</td>
+                <td>4</td>
             </tr>
             <tr data-group="2">
                 <td>e</td>
@@ -215,7 +288,7 @@
                 <td>2011/04/25</td>
                 <td>$320,800</td>
                 <td>2</td>
-                <td>3</td>
+                <td>5</td>
             </tr>
             <tr data-group="2">
                 <td>f</td>
@@ -225,7 +298,21 @@
                 <td>2011/04/25</td>
                 <td>$320,800</td>
                 <td>2</td>
-                <td>4</td>
+                <td>6</td>
+            </tr>
+        </tbody>
+    </table>
+    <table id="clone" class="display" style="display:none;">
+        <tbody>
+            <tr>
+                <td>f</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+                <td>2</td>
+                <td>6</td>
             </tr>
         </tbody>
     </table>
