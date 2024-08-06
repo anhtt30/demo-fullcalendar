@@ -61,7 +61,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: bisque;
+            background-color: white;
         }
 
         #filterButton {
@@ -155,7 +155,7 @@
         }
         .fa-trash-can {
             font-size: 24px;
-            color: yellowgreen;
+            color: #9acd32;
             background-color: transparent;
             border: none;
         }
@@ -165,22 +165,63 @@
             color: rgb(50, 54, 43);
             cursor: pointer;
         }
-        .icon {
-            width: 75px;  /* Adjust the size as needed */
+        .icon-save {
+            width: 25px;  /* Adjust the size as needed */
             height: 25px; /* Adjust the size as needed */
-            background-image: url('circle-check-solid.png');
+            background-image: url('circle-check-solid (2).png');
             background-size: contain;
             background-position: left;
             background-repeat: no-repeat;
-            background-color: gray;
+            /* background-color: gray; */
             border: none;
+            border-radius: 12.5px; /* Half of the width/height to make it circular */
         }
 
-        .icon:hover {
+        .icon-save:hover {
             cursor: pointer;
-            background-image: url('circle-check-solid-1.svg');
+            background-image: url('circle-check-solid-1.png');
+            background-repeat: no-repeat;
+            /* background-color: lightgray; */
+        }
+
+        .icon-delete {
+            width: 25px;  /* Adjust the size as needed */
+            height: 25px; /* Adjust the size as needed */
+            background-image: url('trash-can-solid-1.png');
+            background-size: contain;
+            background-position: left;
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+           
+        }
+
+        .icon-delete:hover {
+            cursor: pointer;
+            background-image: url('trash-can-solid.png');
+            background-repeat: no-repeat;
+            /* background-color: lightgray; */
+        }
+
+        .icon-2 {
+            width: 75px;  /* Adjust the size as needed */
+            height: 25px; /* Adjust the size as needed */
+            background-color: lightgrey;
+            border-radius: 5px;
+            border: none;
+            background-image: url('filter-solid.png');
+            background-size: contain;
+            background-position: left;
             background-repeat: no-repeat;
         }
+
+        .icon-2:hover {
+            cursor: pointer;
+            background-image: url('filter-solid.png');
+            background-repeat: no-repeat;
+            /* background-color: lightgray; */
+        }
+
 
     </style>
 </head>
@@ -217,10 +258,25 @@
     </table>
     <!-- SVG filter icon -->
     
-    <i class="fas fa-filter filter-icon"></i>
-    <button id="delete-btn" class="fa-solid fa-trash-can"></button>
-    <button id="save-btn" class="icon"></button>
-    <img src="circle-check-solid.svg" alt="Filter Icon" class="icon">
+
+    <table>
+        <tbody>
+            <tr>
+                <td><i class="fas fa-filter filter-icon"></i></td>
+                <td><button id="delete-btn" class="icon-delete"></button></td>
+                <td><button id="save-btn" class="icon-save"></button></td>
+                <td><img src="circle-check-solid.svg" alt="Filter Icon" class="icon"></td>
+                <td><button id="save-btn2" class="icon-2"></button></td>
+            </tr>
+            
+        </tbody>
+
+        
+    </table>
+    
+    
+    
+    
 
 
 </body>
