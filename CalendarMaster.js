@@ -1,18 +1,14 @@
+/* eslint-disable no-undef */
 function CalendarMaster(calendarEl) {
     this.calendarEl = calendarEl;
     this.calendar; // FullCalendar instance
     this.initResources; // hold current resource of calendar
     this.permission
-    this.test = [];
 }
 
 CalendarMaster.prototype.initCalendar = function() {
     let self = this;
     let test1 = self.test;
-    self.test = ['hello'];
-    test1.push('world');
-    console.log(test1);
-    console.log(self.test);
     var calendarEditor = new CalendarEditor();
     self.calendar = new FullCalendar.Calendar(self.calendarEl, {
         now: '2024-07-15',
@@ -138,6 +134,35 @@ CalendarMaster.prototype.initCalendar = function() {
         },
         viewDidMount: function (arg) {
             self.setupSortable();
+            $('.fc-icon').on('click', function (event) {
+                event.stopPropagation(); // Prevent event bubbling
+                if ($(this).hasClass('fc-icon-minus-square')) {
+                    let section = $(this).closest('tr').attr('data-section');
+                    $(this).closest('tr').nextAll().each(function () {
+                        if ($(this).attr('data-section') == section) {
+                            $(this).addClass('hide');
+                            var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').addClass('hide'); // Hide the corresponding row in the timeline view
+                        }
+                    })
+
+                }
+
+                if( $(this).hasClass('fc-icon-plus-square')) {
+                    let section = $(this).closest('tr').attr('data-section');
+                    $(this).closest('tr').nextAll().each(function () {
+                        if ($(this).attr('data-section') == section) {
+                            $(this).removeClass('hide');
+                            var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').removeClass('hide'); // Hide the corresponding row in the timeline view
+                        }
+                    })
+                }
+
+                $(this).toggleClass('fc-icon-minus-square');
+                $(this).toggleClass('fc-icon-plus-square');
+            })
+
         }
 
         //  eventContent: function (arg) {
@@ -215,11 +240,11 @@ CalendarMaster.prototype.setupSortable = function() {
      const table = $('.fc-datagrid-body tbody').first();
      const rows = table.find('tr');
  
-     Array.from(rows).slice(1, 6).forEach(row => {
+     Array.from(rows).slice(1, 5).forEach(row => {
          $(row).attr('data-section', '1');
      });
  
-     Array.from(rows).slice(6, 15).forEach(row => {
+     Array.from(rows).slice(5, 15).forEach(row => {
          $(row).attr('data-section', '2');
      });
      let sortableClasses = ['.sortable-row', '.sortable-row-1'];
@@ -386,13 +411,14 @@ CalendarMaster.prototype.setupSortable = function() {
 }
 
 
+
 function scrollToSpecificDate(date) {
     var date = new Date();
     // date.format('yyyy-MM-dd')
     var timeGrid = $(`td .fc-timeline-slot[data-date="2024-07-21"]`)[0];
 
     console.log(timeGrid);
-    timeGrid.scrollIntoView({ inline: "center" });
+    timeGrid.scrollIntoView({ inline: "center", block: "nearest" });
     // var startTime = calendar.view.activeStart;
     // var endTime = calendar.view.activeEnd;
     // var totalDuration = endTime - startTime;

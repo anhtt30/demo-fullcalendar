@@ -222,6 +222,37 @@
             /* background-color: lightgray; */
         }
 
+        .icon-3 {
+            width: 25px;  /* Adjust the size as needed */
+            height: 25px; /* Adjust the size as needed */
+            background-color: lightgrey;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .icon-4 {
+            width: 25px;  /* Adjust the size as needed */
+            height: 25px; /* Adjust the size as needed */
+            background-color: lightgrey;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .icon-3::before {
+            content: "\02C2"; 
+            font-size: large;
+            color: #f0f0f0;
+        }
+
+        .icon-4::before {
+            content: "\02C3"; 
+            font-size: large;
+            color: #f0f0f0;
+        }
+ 
+        td {
+            vertical-align: top;
+        }
 
     </style>
 </head>
@@ -267,6 +298,8 @@
                 <td><button id="save-btn" class="icon-save"></button></td>
                 <td><img src="circle-check-solid.svg" alt="Filter Icon" class="icon"></td>
                 <td><button id="save-btn2" class="icon-2"></button></td>
+                <td><button id="save-btn3" class="icon-3"></button></td>
+                <td><button id="save-btn4" class="icon-4"></button></td>
             </tr>
             
         </tbody>
