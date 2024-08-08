@@ -35,7 +35,7 @@
 
             window.addEventListener('click', function (event) {
 
-                if (!event.target.matches('#filterButton')) {
+                if (!event.target.matches('#filterButton') || !event.target.matches('#dropdownMenu')) {
                     var dropdowns = document.getElementsByClassName('dropdown-content');
                     for (var i = 0; i < dropdowns.length; i++) {
                         var openDropdown = dropdowns[i];
@@ -54,6 +54,10 @@
                 $('#filterButton .color-span').css('background-color', $(this).find('.color-span').attr('data-color'));
             })
 
+            $('.icon-4').on('click', function () {
+                console.log('clicked');
+            })
+
         });
 
 
@@ -66,6 +70,7 @@
 
         #filterButton {
             display: inline-block;
+            height: 27px;
             width: 70px;            /* Width similar to a select box */
             padding: 5px;            /* Padding to make it look like a select box */
             background-color: white; /* Background color of a typical select box */
@@ -77,7 +82,7 @@
         }
 
         #filterButton:after {
-            content: '▼';            /* Unicode arrow down symbol */
+            content: '\02C5';            /* Unicode arrow down symbol */
             position: absolute;
             right: 5px;             /* Position arrow inside the button */
             top: 50%;
@@ -210,8 +215,8 @@
             border-radius: 5px;
             border: none;
             background-image: url('filter-solid.png');
-            background-size: contain;
-            background-position: left;
+            background-size: 25%;
+            background-position: 5px center; /* Adjust the position as needed**/
             background-repeat: no-repeat;
         }
 
@@ -236,6 +241,8 @@
             background-color: lightgrey;
             border-radius: 5px;
             border: none;
+            cursor: pointer;
+            pointer-events: none;
         }
 
         .icon-3::before {
@@ -248,6 +255,11 @@
             content: "\02C3"; 
             font-size: large;
             color: #f0f0f0;
+            
+        }
+
+        .icon-4:hover {
+            background-color: #f0f0f0;
         }
  
         td {
@@ -264,7 +276,7 @@
         <tbody>
             <tr>
                 <td>hello</td>
-                <td><button id="filterButton"><span class="color-span">click</span></button>
+                <td><button id="filterButton"><span class="color-span"></span></button>
                     <div id="dropdownMenu" class="dropdown-content">
                         <label for="filter1">
                             <span class="color-span" data-color="red" style="background-color: red;"></span>
@@ -282,6 +294,8 @@
                 <td></td>
                 <td></td>
             </tr>
+
+            <div id="sidemenu"></div>
             
         </tbody>
 
