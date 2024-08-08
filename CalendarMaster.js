@@ -140,9 +140,14 @@ CalendarMaster.prototype.initCalendar = function() {
                     let section = $(this).closest('tr').attr('data-section');
                     $(this).closest('tr').nextAll().each(function () {
                         if ($(this).attr('data-section') == section) {
-                            $(this).addClass('hide');
+                            //$(this).addClass('hide');
+                            // $(this).toggle("slow");
+                            // $(this).find('td').slideToggle("slow");
+                            $(this).slideUp("fast");
+                            $(this).find("td").contents().slideUp("fast");
                             var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').addClass('hide'); // Hide the corresponding row in the timeline view
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideUp('fast'); // Hide the corresponding row in the timeline view
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideUp('fast');
                         }
                     })
 
@@ -152,9 +157,13 @@ CalendarMaster.prototype.initCalendar = function() {
                     let section = $(this).closest('tr').attr('data-section');
                     $(this).closest('tr').nextAll().each(function () {
                         if ($(this).attr('data-section') == section) {
-                            $(this).removeClass('hide');
+                            // $(this).removeClass('hide');
+                            // $(this).toggle("slow");
+                            $(this).slideDown("fast");
+                            $(this).find("td").contents().slideDown("fast");
                             var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').removeClass('hide'); // Hide the corresponding row in the timeline view
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideDown('fast'); // Hide the corresponding row in the timeline view
+                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideDown('fast');
                         }
                     })
                 }
