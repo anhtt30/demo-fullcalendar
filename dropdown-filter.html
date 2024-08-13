@@ -5,15 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dropdown filter</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.0/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.3.3/css/rowReorder.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.0/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/rowreorder/1.3.3/js/dataTables.rowReorder.min.js"></script>
-    <script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             document.getElementById('filterButton').addEventListener('click', function () {
@@ -47,14 +41,23 @@
                     }
                 }
             });
+            $('#floatingWindow').draggable({
+                 handle: ".header"
+            });
+
+            $("#closeButton").on("click", function () {
+                $("#floatingWindow").hide();
+            })
         });
+
+        
 
 
     </script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: bisque;
+            background-color: #fff;
         }
 
         #filterButton {
@@ -84,15 +87,17 @@
             /* Make it visible */
             opacity: 1;
             /* Set opacity to 1 to fade in */
-             transform: translateY(10px); 
+            transform: translateY(10px);
             /* Reset transform to original position */
         }
 
         #dropdownMenu::before {
             content: "";
             position: absolute;
-            top: -20px; /* Position the arrow */
-            left: 20px; /* Adjust this to align the arrow */
+            top: -20px;
+            /* Position the arrow */
+            left: 20px;
+            /* Adjust this to align the arrow */
             border-width: 10px;
             border-style: solid;
             border-color: transparent transparent #f9f9f9 transparent;
@@ -107,6 +112,43 @@
         #dropdownMenu label:hover {
             background-color: #f1f1f1;
             border-radius: 5px;
+        }
+
+        .floating-window {
+            width: 300px;
+            position: fixed;
+            top: 10%;
+            left: 10%;
+            background: pink;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: block;
+            z-index: 1000;
+            opacity: 0.8;
+        }
+
+        .header {
+            padding: 5px;
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-button {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .content {
+            padding: 5px;
+            color: #fff;
+        }
+
+        .content p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -127,6 +169,16 @@
         </label>
     </div>
 
+    <div class="floating-window" id="floatingWindow">
+        <div class="header">
+            <span class="close-button" id="closeButton">&times;</span>
+        </div>
+        <div class="content">
+            <p>This is a floating window. You can add any content here.</p>
+        </div>
+    </div>
+
+    <button id="openButton">Open Floating Window</button>
 
 </body>
 
