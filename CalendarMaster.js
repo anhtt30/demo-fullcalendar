@@ -134,43 +134,7 @@ CalendarMaster.prototype.initCalendar = function() {
         },
         viewDidMount: function (arg) {
             self.setupSortable();
-            $('.fc-icon').on('click', function (event) {
-                event.stopPropagation(); // Prevent event bubbling
-                if ($(this).hasClass('fc-icon-minus-square')) {
-                    let section = $(this).closest('tr').attr('data-section');
-                    $(this).closest('tr').nextAll().each(function () {
-                        if ($(this).attr('data-section') == section) {
-                            //$(this).addClass('hide');
-                            // $(this).toggle("slow");
-                            // $(this).find('td').slideToggle("slow");
-                            $(this).slideUp("fast");
-                            $(this).find("td").contents().slideUp("fast");
-                            var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideUp('fast'); // Hide the corresponding row in the timeline view
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideUp('fast');
-                        }
-                    })
-
-                }
-
-                if( $(this).hasClass('fc-icon-plus-square')) {
-                    let section = $(this).closest('tr').attr('data-section');
-                    $(this).closest('tr').nextAll().each(function () {
-                        if ($(this).attr('data-section') == section) {
-                            // $(this).removeClass('hide');
-                            // $(this).toggle("slow");
-                            $(this).slideDown("fast");
-                            $(this).find("td").contents().slideDown("fast");
-                            var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideDown('fast'); // Hide the corresponding row in the timeline view
-                            $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideDown('fast');
-                        }
-                    })
-                }
-
-                $(this).toggleClass('fc-icon-minus-square');
-                $(this).toggleClass('fc-icon-plus-square');
-            })
+            //setupCollapseFunction();
 
         }
 
@@ -183,6 +147,47 @@ CalendarMaster.prototype.initCalendar = function() {
 
     self.calendar.render();
     self.initResources = self.calendar.getResources();
+
+}
+
+CalendarMaster.prototype.setupCollapseFunction = function () {
+    $('.fc-icon-minus-square, .fc-icon-plus-square').off('click'); // Remove existing click event handlers
+    $('.fc-icon-minus-square, .fc-icon-plus-square').on('click', function (event) {
+        event.stopPropagation(); // Prevent event bubbling
+        if ($(this).hasClass('fc-icon-minus-square')) {
+            let section = $(this).closest('tr').attr('data-section');
+            $(this).closest('tr').nextAll().each(function () {
+                if ($(this).attr('data-section') == section) {
+                    //$(this).addClass('hide');
+                    // $(this).toggle("slow");
+                    // $(this).find('td').slideToggle("slow");
+                    $(this).slideUp("fast");
+                    $(this).find("td").contents().slideUp("fast");
+                    var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
+                    $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideUp('fast'); // Hide the corresponding row in the timeline view
+                    $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideUp('fast');
+                }
+            })
+        }
+
+        if( $(this).hasClass('fc-icon-plus-square')) {
+            let section = $(this).closest('tr').attr('data-section');
+            $(this).closest('tr').nextAll().each(function () {
+                if ($(this).attr('data-section') == section) {
+                    // $(this).removeClass('hide');
+                    // $(this).toggle("slow");
+                    $(this).slideDown("fast");
+                    $(this).find("td").contents().slideDown("fast");
+                    var resourceId = $(this).children().first().attr('data-resource-id'); // Get the resource ID
+                    $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).closest('tr').slideDown('fast'); // Hide the corresponding row in the timeline view
+                    $(`.fc-timeline-body td[data-resource-id="${resourceId}"]`).contents().slideDown('fast');
+                }
+            })
+        }
+
+        $(this).toggleClass('fc-icon-minus-square');
+        $(this).toggleClass('fc-icon-plus-square');
+    })
 }
 
 CalendarMaster.prototype.initFilter = function() {

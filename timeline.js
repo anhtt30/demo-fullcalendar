@@ -57,6 +57,9 @@ $(document).ready(function () {
         scrollToSpecificDate(new Date());
     })
     
+    $('#bindCollapse').on('click', function () {
+        calendarMaster.setupCollapseFunction();
+    })
 
     function firstDayInPreviousMonth(yourDate) {
         return new Date(yourDate.getFullYear(), yourDate.getMonth() - 1, 1);
