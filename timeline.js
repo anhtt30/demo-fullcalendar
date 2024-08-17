@@ -13,6 +13,7 @@ $(document).ready(function () {
     var calendarMaster = new CalendarMaster(calendarEl);
     calendarMaster.initCalendar();    
     calendarMaster.initFilter();
+    calendarMaster.setupHeader();
     // Custom code to enable dragging the timeline
     var isDragging = false;
     var startX, startY, scrollLeft, scrollTop;
@@ -60,14 +61,5 @@ $(document).ready(function () {
     $('#bindCollapse').on('click', function () {
         calendarMaster.setupCollapseFunction();
     })
-
-    function firstDayInPreviousMonth(yourDate) {
-        return new Date(yourDate.getFullYear(), yourDate.getMonth() - 1, 1);
-    }
-
-    function lastDayInNextMonth(yourDate) {
-        return new Date(yourDate.getFullYear(), yourDate.getMonth() + 2, 0);
-    }
-
     
 });

@@ -106,7 +106,7 @@ CalendarMaster.prototype.initCalendar = function() {
         ],
 
         events: [
-            { id: '1', resourceId: 'b', start: '2024-06-04', end: '2024-07-17', title: 'event 1' },
+            { id: '1', resourceId: 'b', start: '2024-06-04', end: '2024-06-06', title: 'event 1' },
             { id: '2', resourceId: 'c', start: '2023-01-07T05:00:00', end: '2023-01-07T22:00:00', title: 'event 2' },
             { id: '3', resourceId: 'd', start: '2023-01-06', end: '2023-01-08', title: 'event 3' },
             { id: '4', resourceId: 'e', start: '2023-01-07T03:00:00', end: '2023-01-07T08:00:00', title: 'event 4' },
@@ -114,13 +114,32 @@ CalendarMaster.prototype.initCalendar = function() {
         ],
         eventResize: function (arg) {
             console.log(arg);
+
             if (arg.event.startStr == '2024-06-01') {
                 self.calendar.gotoDate('2024-05-01');
                 self.calendar.setOption('duration', { months: self.calendar.getOption('duration').months + 1 });
                 console.log(self.calendar.view.activeEnd);
+                console.log(self.calendar.view.activeStart);
                 console.log(self.calendar.getOption('duration'));
-                scrollToSpecificDate(new Date());
+                //scrollToSpecificDate(new Date());
             }
+        },
+        eventChange: function (arg) {
+            console.log(arg);
+        },
+        eventContent: function (arg) {
+            console.log(arg);
+            let content = document.createElement('div');
+            content.innerHTML = arg.event.title;
+            content.classList = 'fc-event-title fc-sticky'
+            $(content).css('padding', '0px 90px'); // Add padding to the title
+            $(content).css('color', 'black'); // Add padding to the title
+
+            return {domNodes:[ content]};
+        },
+        eventClick: function (arg) {
+            console.log(arg);
+            arg.jsEvent.stopPropagation();
         },
         datesSet: function () {
             console.log('test');
@@ -147,6 +166,9 @@ CalendarMaster.prototype.initCalendar = function() {
 
     self.calendar.render();
     self.initResources = self.calendar.getResources();
+    $(document).on('click', function() {
+        console.log('test');
+    })
 
 }
 
@@ -247,10 +269,7 @@ CalendarMaster.prototype.initFilter = function() {
 CalendarMaster.prototype.setupSortable = function() {
     let self = this;
      // this.calendar = calendar;
-     $('.fc-datagrid-header').css('width', '400px');
-     $('.fc-datagrid-header').css('max-width', '400px');
-     $('.fc-datagrid-body').css('width', '400px');
-     $('.fc-datagrid-body').css('max-width', '400px');
+     
      const table = $('.fc-datagrid-body tbody').first();
      const rows = table.find('tr');
  
@@ -424,12 +443,44 @@ CalendarMaster.prototype.setupSortable = function() {
      });
 }
 
+CalendarMaster.prototype.setupHeader = function () {
+    var self = this;
+    $('.fc-datagrid-header').css('width', '400px');
+    $('.fc-datagrid-header').css('max-width', '400px');
+    $('.fc-datagrid-body').css('width', '400px');
+    $('.fc-datagrid-body').css('max-width', '400px');
+
+    $('.fc-datagrid-header thead tr').clone().insertBefore($('.fc-datagrid-header thead tr'))
+    $('.fc-datagrid-header thead tr th .fc-datagrid-cell-frame').css('height', '49px');
+    $('.fc-datagrid-header thead tr').eq(0).find('th').eq(1).remove();
+    $('.fc-datagrid-header thead tr').eq(0).find('th').eq(1).remove();
+    $('.fc-datagrid-header thead tr').eq(0).find('th').eq(1).remove();
+    $('.fc-datagrid-header thead tr').eq(0).find('th').eq(0).attr('colspan',4);
+    let $menuHeader = $('.fc-datagrid-header thead tr').eq(0).find('th').eq(0).find('.fc-datagrid-cell-frame');
+    $menuHeader.html('');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+
+}
+
+function firstDayInPreviousMonth(yourDate) {
+    return new Date(yourDate.getFullYear(), yourDate.getMonth() - 1, 1);
+}
+
+function lastDayInNextMonth(yourDate) {
+    return new Date(yourDate.getFullYear(), yourDate.getMonth() + 2, 0);
+}
 
 
 function scrollToSpecificDate(date) {
     var date = new Date();
     // date.format('yyyy-MM-dd')
-    var timeGrid = $(`td .fc-timeline-slot[data-date="2024-07-21"]`)[0];
+    var timeGrid = $(`td .fc-timeline-slot[data-date="2024-06-01"]`)[0];
 
     console.log(timeGrid);
     timeGrid.scrollIntoView({ inline: "center", block: "nearest" });
