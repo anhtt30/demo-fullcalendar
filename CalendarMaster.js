@@ -153,6 +153,20 @@ CalendarMaster.prototype.initCalendar = function() {
         },
         viewDidMount: function (arg) {
             self.setupSortable();
+            // Select the divider element
+            var $element = $(".fc-datagrid-body").closest('td');
+            // Check if the element exists
+            if ($element.length) {
+                const observer = new ResizeObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        console.log('Element resized:', entry.contentRect.width);
+                        $('#node').css('width', entry.contentRect.width);
+                        // Handle resize event here
+                    });
+                });
+
+                observer.observe($element[0]); // Observe the first matched element
+            }
             //setupCollapseFunction();
 
         }
@@ -166,9 +180,9 @@ CalendarMaster.prototype.initCalendar = function() {
 
     self.calendar.render();
     self.initResources = self.calendar.getResources();
-    $(document).on('click', function() {
-        console.log('test');
-    })
+    // $(document).on('click', function() {
+    //     console.log('test');
+    // })
 
 }
 
@@ -458,13 +472,8 @@ CalendarMaster.prototype.setupHeader = function () {
     $('.fc-datagrid-header thead tr').eq(0).find('th').eq(0).attr('colspan',4);
     let $menuHeader = $('.fc-datagrid-header thead tr').eq(0).find('th').eq(0).find('.fc-datagrid-cell-frame');
     $menuHeader.html('');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
-    $menuHeader.append('<input type="button" id="gotoDate" value="Go to date">');
+    $menuHeader.append('<textarea id="node" style="width:500px"></textarea>');
+   
 
 }
 
