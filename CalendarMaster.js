@@ -4,6 +4,9 @@ function CalendarMaster(calendarEl) {
     this.calendar; // FullCalendar instance
     this.initResources; // hold current resource of calendar
     this.permission
+    this.scrollDate
+    this.initialScrollTop;
+    this.initialScrollLeft;
 }
 
 CalendarMaster.prototype.initCalendar = function() {
@@ -34,7 +37,8 @@ CalendarMaster.prototype.initCalendar = function() {
         slotDuration: { days: 1 },
         // 開始
         // 期間
-        duration: { months: 3 },
+        duration: { days: 92 },
+        scrollTimeReset: false,
         dateIncrement: { months: 1 },
         views: {
             resourceTimelineThreeDays: {
@@ -106,29 +110,27 @@ CalendarMaster.prototype.initCalendar = function() {
         ],
 
         events: [
-            { id: '1', resourceId: 'b', start: '2024-06-04', end: '2024-06-06', title: 'event 1' },
-            { id: '2', resourceId: 'c', start: '2023-01-07T05:00:00', end: '2023-01-07T22:00:00', title: 'event 2' },
-            { id: '3', resourceId: 'd', start: '2023-01-06', end: '2023-01-08', title: 'event 3' },
-            { id: '4', resourceId: 'e', start: '2023-01-07T03:00:00', end: '2023-01-07T08:00:00', title: 'event 4' },
-            { id: '5', resourceId: 'f', start: '2023-01-07T00:30:00', end: '2023-01-07T02:30:00', title: 'event 5' }
+            { id: '1', resourceId: 'b', start: '2024-06-04', end: '2024-06-06', title: 'event 1' }
+            // { id: '2', resourceId: 'c', start: '2023-01-07T05:00:00', end: '2023-01-07T22:00:00', title: 'event 2' },
+            // { id: '3', resourceId: 'd', start: '2023-01-06', end: '2023-01-08', title: 'event 3' },
+            // { id: '4', resourceId: 'e', start: '2023-01-07T03:00:00', end: '2023-01-07T08:00:00', title: 'event 4' },
+            // { id: '5', resourceId: 'f', start: '2023-01-07T00:30:00', end: '2023-01-07T02:30:00', title: 'event 5' }
         ],
         eventResize: function (arg) {
-            console.log(arg);
 
-            if (arg.event.startStr == '2024-06-01') {
-                self.calendar.gotoDate('2024-05-01');
-                self.calendar.setOption('duration', { months: self.calendar.getOption('duration').months + 1 });
-                console.log(self.calendar.view.activeEnd);
-                console.log(self.calendar.view.activeStart);
-                console.log(self.calendar.getOption('duration'));
-                //scrollToSpecificDate(new Date());
-            }
+            // if (arg.event.startStr == '2024-06-01') {
+            //     self.calendar.gotoDate('2024-05-01');
+            //     self.calendar.setOption('duration', { months: self.calendar.getOption('duration').months + 1 });
+            //     console.log(self.calendar.view.activeEnd);
+            //     console.log(self.calendar.view.activeStart);
+            //     console.log(self.calendar.getOption('duration'));
+            //     //scrollToSpecificDate(new Date());
+            // }
+            self.autoAdjustCalendarRange(arg);
         },
         eventChange: function (arg) {
-            console.log(arg);
         },
         eventContent: function (arg) {
-            console.log(arg);
             let content = document.createElement('div');
             content.innerHTML = arg.event.title;
             content.classList = 'fc-event-title fc-sticky'
@@ -138,11 +140,15 @@ CalendarMaster.prototype.initCalendar = function() {
             return {domNodes:[ content]};
         },
         eventClick: function (arg) {
-            console.log(arg);
             arg.jsEvent.stopPropagation();
         },
         datesSet: function () {
             console.log('test');
+            $(self.calendarEl).find('.fc-timeline-body').closest('.fc-scroller-liquid-absolute').scrollTop(self.initialScrollTop);
+            $(self.calendarEl).find('.fc-timeline-body').closest('.fc-scroller-liquid-absolute').scrollLeft(self.initialScrollLeft); // Restore the initial scroll position
+            // if(self.scrollDate != undefined) {
+            //   scrollToSpecificDate(self.scrollDate, 'start');
+            // }
             // calendar.setOption('duration', {month:7});
             //calendar.gotoDate('2024-08-01');
             //scrollToSpecificDate('2024-08-01');
@@ -150,6 +156,10 @@ CalendarMaster.prototype.initCalendar = function() {
         eventAllow: function (dropInfo, draggedEvent) {
             // Allow resizing beyond the original duration
             return true;
+        },
+        slotLabelContent : function(arg) {
+            console.log(arg);
+            return arg.text;
         },
         viewDidMount: function (arg) {
             self.setupSortable();
@@ -477,6 +487,79 @@ CalendarMaster.prototype.setupHeader = function () {
 
 }
 
+CalendarMaster.prototype.autoAdjustCalendarRange = function(arg) {
+    var self = this;
+    var events = self.calendar.getEvents();
+    var minimizeStartDate = events[0].start;
+    var maxmizeEndDate = events[0].end;
+    $.each(events, function (index, value) {
+        if (value.start < minimizeStartDate) minimizeStartDate = value.start;
+        if (value.end > maxmizeEndDate) maxmizeEndDate = value.end;
+    });
+    self.initialScrollTop = $(self.calendarEl).find('.fc-timeline-body').closest('.fc-scroller-liquid-absolute').scrollTop(); // Store the initial scroll position
+    self.initialScrollLeft = $(self.calendarEl).find('.fc-timeline-body').closest('.fc-scroller-liquid-absolute').scrollLeft(); // Store the initial scroll position
+
+    var currentStartDate = new Date(self.calendar.view.activeStart);
+    if (arg.event.start.getTime() - (1000 * 60 * 60 * 24 * 5) < currentStartDate.getTime()) {
+        var newStartDate = new Date(new Date(arg.event.start - (1000 * 60 * 60 * 24 * 5)).format().substring(0, 8) + '01');
+        newStartDate.setHours(0,0,0,0);
+        self.calendar.batchRendering(function () {
+            self.calendar.gotoDate(newStartDate);
+            self.calendar.setOption('duration', { days: self.calendar.getOption('duration').days + newStartDate.distanceInDays(currentStartDate) + 1 });
+            self.initialScrollLeft += newStartDate.distanceInDays(currentStartDate) * 40; // Adjust the scroll position based on the date difference
+        })
+        self.scrollDate = arg.event.start;
+
+    } else if (minimizeStartDate.getTime() == arg.event.start.getTime()) {
+        var newStartDate = new Date(new Date(arg.event.start - (1000 * 60 * 60 * 24 * 5)).format().substring(0, 8) + '01');
+        newStartDate.setHours(0,0,0,0);
+        if (arg.event.start.getTime() - (1000 * 60 * 60 * 24 * 5) >= newStartDate.getTime()) {
+            if (newStartDate.getTime() != currentStartDate.getTime()) {
+                self.calendar.batchRendering(function () {
+                    self.calendar.gotoDate(newStartDate); 
+                    self.calendar.setOption('duration', { days: self.calendar.getOption('duration').days - currentStartDate.distanceInDays(newStartDate) });
+                    self.initialScrollLeft -= currentStartDate.distanceInDays(newStartDate) * 40;
+                })
+                self.scrollDate = newStartDate;
+            }
+        }
+    }
+
+    var currentEndDate = new Date(self.calendar.view.activeEnd);
+    if (arg.event.end.getTime() + (1000 * 60 * 60 * 24 * 5) > (new Date(currentEndDate.getFullYear(), currentEndDate.getMonth() - 1, 1).getTime())) {
+        var newEndDate = new Date(new Date(arg.event.end.getTime() + (1000 * 60 * 60 * 24 * 5)).getFullYear(), new Date(arg.event.end.getTime() + (1000 * 60 * 60 * 24 * 5)).getMonth() + 2, 1);
+        newEndDate.setHours(0,0,0,0);
+        self.calendar.batchRendering(function () {
+            self.calendar.setOption('duration', { days: self.calendar.getOption('duration').days + currentEndDate.distanceInDays(newEndDate)});
+        })
+    } else if (maxmizeEndDate.getTime() == arg.event.end.getTime()) {
+        var newEndDate = new Date(new Date(arg.event.end.getTime() + (1000 * 60 * 60 * 24 * 5)).getFullYear(), new Date(arg.event.end.getTime() + (1000 * 60 * 60 * 24 * 5)).getMonth() + 2, 1);
+        newEndDate.setHours(0,0,0,0);
+        if (newEndDate.getTime() < currentEndDate.getTime()) {
+            self.calendar.setOption('duration', { days: self.calendar.getOption('duration').days - newEndDate.distanceInDays(currentEndDate) });
+        }
+    }
+} 
+
+Date.prototype.distanceInDays = function (date) {
+    var diff = date.getTime() - this.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+Date.prototype.format = function () {
+    var d = this,
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 function firstDayInPreviousMonth(yourDate) {
     return new Date(yourDate.getFullYear(), yourDate.getMonth() - 1, 1);
 }
@@ -487,12 +570,12 @@ function lastDayInNextMonth(yourDate) {
 
 
 function scrollToSpecificDate(date) {
-    var date = new Date();
+    //var date = new Date();
     // date.format('yyyy-MM-dd')
-    var timeGrid = $(`td .fc-timeline-slot[data-date="2024-06-01"]`)[0];
+    var timeGrid = $(`td .fc-timeline-slot[data-date="${date.format()}"]`)[0];
 
     console.log(timeGrid);
-    timeGrid.scrollIntoView({ inline: "center", block: "nearest" });
+    timeGrid.scrollIntoView({ inline: "start", block: "nearest" });
     // var startTime = calendar.view.activeStart;
     // var endTime = calendar.view.activeEnd;
     // var totalDuration = endTime - startTime;
